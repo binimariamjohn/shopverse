@@ -1,3 +1,18 @@
+# Java / Gradle
+server/build/
+server/.gradle/
+
+# Node
+client/node_modules/
+client/dist/
+
+# IDE
+.idea/
+*.iml
+
+# Environment files
+.env
+
 # Compiled class file
 *.class
 
