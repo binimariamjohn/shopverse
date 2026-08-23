@@ -79,3 +79,41 @@ button:disabled {
   flex-direction: column;
   gap: 0.5rem;
 }
+
+.product-controls {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.search-input {
+  flex: 1;
+}
+
+.sort-select {
+  min-width: 180px;
+}
+
+.empty-state {
+  padding: 2rem;
+  text-align: center;
+}
+
+.product-card {
+  cursor: pointer;
+}
+
+.product-card:hover {
+  transform: translateY(-2px);
+  transition: transform 0.2s ease;
+}
+
+.product-card.editing {
+  cursor: default;
+}
+
+.product-category {
+  font-size: 0.9rem;
+  color: #666;
+  margin-bottom: 0.5rem;
+}

@@ -1,5 +1,5 @@
-import { useState, type FormEvent } from "react";
-import type { Product } from "../types/Product";
+import {useState, type FormEvent} from "react";
+import type {Product} from "../types/Product";
 import {updateProduct} from "../api/products";
 
 type EditProductFormProps = {
@@ -15,6 +15,7 @@ function EditProductForm({
                          }: EditProductFormProps) {
     const [name, setName] = useState(product.name);
     const [price, setPrice] = useState(product.price.toString());
+    const [category, setCategory] = useState(product.category);
 
     const [errors, setErrors] = useState<Record<string, string>>({});
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -26,9 +27,10 @@ function EditProductForm({
         setIsSubmitting(true);
 
         try {
-            const updatedProduct = await         updateProduct(product.id, {
+            const updatedProduct = await updateProduct(product.id, {
                 name,
                 price: Number(price),
+                category,
             });
 
             onProductUpdated(updatedProduct);
@@ -77,6 +79,27 @@ function EditProductForm({
 
                 {errors.name && (
                     <p className="field-error">{errors.name}</p>
+                )}
+            </div>
+
+            <div className="form-field">
+                <label htmlFor="category">Category</label>
+
+                <select
+                    id="category"
+                    value={category}
+                    onChange={(event) => setCategory(event.target.value)}
+                >
+                    <option value="">Select a category</option>
+                    <option value="ELECTRONICS">Electronics</option>
+                    <option value="HOME">Home</option>
+                    <option value="FASHION">Fashion</option>
+                    <option value="SPORTS">Sports</option>
+                    <option value="OTHER">Other</option>
+                </select>
+
+                {errors.category && (
+                    <p className="field-error">{errors.category}</p>
                 )}
             </div>
 

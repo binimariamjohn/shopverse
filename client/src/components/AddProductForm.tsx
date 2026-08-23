@@ -9,8 +9,10 @@ type AddProductFormProps = {
 function AddProductForm({ onProductCreated }: AddProductFormProps) {
     const [name, setName] = useState("");
     const [price, setPrice] = useState("");
+    const [category, setCategory] = useState("");
     const [errors, setErrors] = useState<Record<string, string>>({});
     const [isSubmitting, setIsSubmitting] = useState(false);
+
 
     async function handleSubmit(event: FormEvent<HTMLFormElement>) {
         event.preventDefault();
@@ -22,12 +24,14 @@ function AddProductForm({ onProductCreated }: AddProductFormProps) {
             const createdProduct = await createProduct({
                 name,
                 price: Number(price),
+                category,
             });
 
             onProductCreated(createdProduct);
 
             setName("");
             setPrice("");
+            setCategory("");
         } catch (error) {
             console.error("Error creating product:", error);
 
@@ -84,6 +88,27 @@ function AddProductForm({ onProductCreated }: AddProductFormProps) {
                 )}
             </div>
 
+            <div className="form-field">
+                <label htmlFor="category">Category</label>
+
+                <select
+                    id="category"
+                    value={category}
+                    onChange={(event) => setCategory(event.target.value)}
+                >
+                    <option value="">Select a category</option>
+                    <option value="ELECTRONICS">Electronics</option>
+                    <option value="HOME">Home</option>
+                    <option value="FASHION">Fashion</option>
+                    <option value="SPORTS">Sports</option>
+                    <option value="OTHER">Other</option>
+                </select>
+
+                {errors.category && (
+                    <p className="field-error">{errors.category}</p>
+                )}
+            </div>
+            
             <div className="form-field">
                 <label htmlFor="price">Price</label>
 
