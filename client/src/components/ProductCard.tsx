@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { deleteProduct } from "../api/products";
 import type { Product } from "../types/Product";
 import EditProductForm from "./EditProductForm";
 
@@ -18,6 +19,17 @@ function ProductCard({
     function handleProductUpdated(updatedProduct: Product) {
         onProductUpdated(updatedProduct);
         setIsEditing(false);
+    }
+
+    async function handleDelete() {
+        try {
+            await deleteProduct(product.id);
+
+            onDelete(product.id);
+        } catch (error) {
+            console.error("Error deleting product:", error);
+            alert("Could not delete product. Please try again.");
+        }
     }
 
     return (
@@ -41,7 +53,7 @@ function ProductCard({
                             Edit
                         </button>
 
-                        <button onClick={() => onDelete(product.id)}>
+                        <button onClick={handleDelete}>
                             Delete
                         </button>
                     </div>

@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from "react";
 import type { Product } from "../types/Product";
+import {updateProduct} from "../api/products";
 
 type EditProductFormProps = {
     product: Product;
@@ -25,36 +26,34 @@ function EditProductForm({
         setIsSubmitting(true);
 
         try {
-            const response = await fetch(
-                `http://localhost:8080/products/${product.id}`,
-                {
-                    method: "PUT",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
-                        name,
-                        price: Number(price),
-                    }),
-                }
-            );
-
-            if (!response.ok) {
-                const errorData = await response.json();
-
-                if (errorData.errors) {
-                    setErrors(errorData.errors);
-                    return;
-                }
-
-                throw new Error(errorData.message || "Failed to update product");
-            }
-
-            const updatedProduct: Product = await response.json();
+            const updatedProduct = await         updateProduct(product.id, {
+                name,
+                price: Number(price),
+            });
 
             onProductUpdated(updatedProduct);
         } catch (error) {
             console.error("Error updating product:", error);
+
+            if (
+                typeof error === "object" &&
+                error !== null &&
+                "errors" in error
+            ) {
+                setErrors((error as { errors: Record<string, string> }).errors);
+                return;
+            }
+
+            if (
+                typeof error === "object" &&
+                error !== null &&
+                "message" in error
+            ) {
+                setErrors({
+                    general: String((error as { message: string }).message),
+                });
+                return;
+            }
 
             setErrors({
                 general: "Could not update product. Please try again.",

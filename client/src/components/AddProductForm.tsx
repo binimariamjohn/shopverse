@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from "react";
 import type { Product } from "../types/Product";
+import {createProduct} from "../api/products";
 
 type AddProductFormProps = {
     onProductCreated: (product: Product) => void;
@@ -18,29 +19,10 @@ function AddProductForm({ onProductCreated }: AddProductFormProps) {
         setIsSubmitting(true);
 
         try {
-            const response = await fetch("http://localhost:8080/products", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    name,
-                    price: Number(price),
-                }),
+            const createdProduct = await createProduct({
+                name,
+                price: Number(price),
             });
-
-            if (!response.ok) {
-                const errorData = await response.json();
-
-                if (errorData.errors) {
-                    setErrors(errorData.errors);
-                    return;
-                }
-
-                throw new Error(errorData.message || "Failed to create product");
-            }
-
-            const createdProduct: Product = await response.json();
 
             onProductCreated(createdProduct);
 
@@ -48,6 +30,28 @@ function AddProductForm({ onProductCreated }: AddProductFormProps) {
             setPrice("");
         } catch (error) {
             console.error("Error creating product:", error);
+
+            if (
+                typeof error === "object" &&
+                error !== null &&
+                "errors" in error
+            ) {
+                setErrors((error as { errors: Record<string, string> }).errors);
+                return;
+            }
+
+            if (
+                typeof error === "object" &&
+                error !== null &&
+                "message" in error
+            ) {
+                setErrors({
+                    general: String(
+                        (error as { message: string }).message
+                    ),
+                });
+                return;
+            }
 
             setErrors({
                 general: "Could not create product. Please try again.",
