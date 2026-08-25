@@ -1,7 +1,6 @@
 import type { Product } from "../types/Product";
 import type {Page} from "../types/Page";
-
-const API_URL = "http://localhost:8080/products";
+import { apiFetch, authHeader } from "./http";
 
 export async function getProducts(
     search?: string,
@@ -19,80 +18,47 @@ export async function getProducts(
     params.set("page", page.toString());
     params.set("size", size.toString());
 
-    const url = `${API_URL}?${params.toString()}`;
-
-    const response = await fetch(url);
-
-    if (!response.ok) {
-        throw new Error("Failed to fetch products");
-    }
-
-    return response.json();
+    return apiFetch<Page<Product>>(`/products?${params.toString()}`);
 }
 
 export async function getProductById(id: number): Promise<Product> {
-    const response = await fetch(`${API_URL}/${id}`);
-
-    if (!response.ok) {
-        throw new Error("Failed to fetch product");
-    }
-
-    return response.json();
+    return apiFetch<Product>(`/products/${id}`);
 }
 
 export async function createProduct(
-    product: Omit<Product, "id">
+    product: Omit<Product, "id">,
+    token: string
 ): Promise<Product> {
-    const response = await fetch(API_URL, {
+    return apiFetch<Product>("/products", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
+            ...authHeader(token),
         },
         body: JSON.stringify(product),
     });
-
-    if (!response.ok) {
-        const errorData = await response.json();
-        throw errorData;
-    }
-
-    return response.json();
 }
 
 export async function updateProduct(
     id: number,
-    product: Omit<Product, "id">
+    product: Omit<Product, "id">,
+    token: string
 ): Promise<Product> {
-    const response = await fetch(`${API_URL}/${id}`, {
+    return apiFetch<Product>(`/products/${id}`, {
         method: "PUT",
         headers: {
             "Content-Type": "application/json",
+            ...authHeader(token),
         },
         body: JSON.stringify(product),
     });
-
-    if (!response.ok) {
-        const errorData = await response.json();
-        throw errorData;
-    }
-
-    return response.json();
 }
 
-export async function deleteProduct(id: number): Promise<void> {
-    const response = await fetch(`${API_URL}/${id}`, {
+export async function deleteProduct(id: number, token: string): Promise<void> {
+    await apiFetch<void>(`/products/${id}`, {
         method: "DELETE",
+        headers: {
+            ...authHeader(token),
+        },
     });
-
-    if (!response.ok) {
-        let errorData;
-
-        try {
-            errorData = await response.json();
-        } catch {
-            throw new Error("Failed to delete product");
-        }
-
-        throw errorData;
-    }
 }

@@ -1,6 +1,6 @@
 # KadaPlatz
 
-KadaPlatz is a full-stack marketplace application built with React and Spring Boot. Users can create, view, edit, delete, search, sort, and browse products.
+KadaPlatz is a full-stack marketplace application built with React and Spring Boot. Users can browse, search, sort, and buy products, with role-based access for sellers and admins.
 
 ## Features
 
@@ -14,6 +14,12 @@ KadaPlatz is a full-stack marketplace application built with React and Spring Bo
 - Pagination
 - Product categories
 - Category validation
+- JWT authentication
+- Role-based access (buyer, seller, admin)
+- Shopping cart (add, update quantity, remove items)
+- Checkout with mock payment
+- Order confirmation
+- Order history
 - PostgreSQL database
 - Docker Compose for local database setup
 
@@ -25,6 +31,7 @@ KadaPlatz is a full-stack marketplace application built with React and Spring Bo
 - TypeScript
 - Vite
 - React Router
+- Auth context + Cart context with protected routes
 
 ### Backend
 
@@ -32,6 +39,8 @@ KadaPlatz is a full-stack marketplace application built with React and Spring Bo
 - Spring Boot
 - Spring Data JPA
 - Hibernate
+- Spring Security
+- jjwt
 - Gradle
 
 ### Database
@@ -154,12 +163,21 @@ Then open:
 http://localhost:5173
 ```
 
-The application currently supports the core product marketplace workflow:
+The application supports the following workflow:
 
-1. Create
-2. View
-3. Search / Sort
-4. Edit
-5. Delete
+1. Register or log in
+2. Browse, search and sort products
+3. Add items to your cart
+4. Checkout with a shipping address and mock card
+5. View your order confirmation and order history
 
-More marketplace features will be added as the project develops.
+Role-based behavior:
+
+1. Public users can browse and view products.
+2. Sellers and admins can create and edit products.
+3. Only admins can delete products.
+
+Default admin account (auto-seeded on startup):
+
+- Email: `admin@kadaplatz.dev`
+- Password: `Admin123!`

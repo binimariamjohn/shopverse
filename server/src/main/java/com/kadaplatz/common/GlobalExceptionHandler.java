@@ -1,5 +1,10 @@
 package com.kadaplatz.common;
 
+import com.kadaplatz.auth.exception.DuplicateEmailException;
+import com.kadaplatz.auth.exception.InvalidCredentialsException;
+import com.kadaplatz.auth.exception.InvalidRegistrationRoleException;
+import com.kadaplatz.cart.exception.EmptyCartException;
+import com.kadaplatz.order.exception.OrderNotFoundException;
 import com.kadaplatz.product.ProductNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -47,5 +52,45 @@ public class GlobalExceptionHandler {
     return ResponseEntity
       .badRequest()
       .body(errorResponse);
+  }
+
+  @ExceptionHandler(DuplicateEmailException.class)
+  public ResponseEntity<ErrorResponse> handleDuplicateEmail(
+    DuplicateEmailException exception
+  ) {
+    ErrorResponse errorResponse = new ErrorResponse(exception.getMessage(), null);
+    return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
+  }
+
+  @ExceptionHandler(InvalidCredentialsException.class)
+  public ResponseEntity<ErrorResponse> handleInvalidCredentials(
+    InvalidCredentialsException exception
+  ) {
+    ErrorResponse errorResponse = new ErrorResponse(exception.getMessage(), null);
+    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
+  }
+
+  @ExceptionHandler(InvalidRegistrationRoleException.class)
+  public ResponseEntity<ErrorResponse> handleInvalidRegistrationRole(
+    InvalidRegistrationRoleException exception
+  ) {
+    ErrorResponse errorResponse = new ErrorResponse(exception.getMessage(), null);
+    return ResponseEntity.badRequest().body(errorResponse);
+  }
+
+  @ExceptionHandler(EmptyCartException.class)
+  public ResponseEntity<ErrorResponse> handleEmptyCart(
+    EmptyCartException exception
+  ) {
+    ErrorResponse errorResponse = new ErrorResponse(exception.getMessage(), null);
+    return ResponseEntity.badRequest().body(errorResponse);
+  }
+
+  @ExceptionHandler(OrderNotFoundException.class)
+  public ResponseEntity<ErrorResponse> handleOrderNotFound(
+    OrderNotFoundException exception
+  ) {
+    ErrorResponse errorResponse = new ErrorResponse(exception.getMessage(), null);
+    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
   }
 }

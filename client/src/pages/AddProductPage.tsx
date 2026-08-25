@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import AddProductForm from "../components/AddProductForm";
 import type { Product } from "../types/Product";
 
@@ -10,15 +10,15 @@ function AddProductPage() {
     }
 
     return (
-        <main className="app">
-            <header className="header">
-                <h1>Add Product</h1>
-                <p>Add a new item to KadaPlatz.</p>
-            </header>
+        <main className="app" style={{ paddingTop: "2rem" }}>
+            <Link to="/" className="back-link">← Back to products</Link>
 
-            <AddProductForm
-                onProductCreated={handleProductCreated}
-            />
+            <div className="page-header">
+                <h1>Add Product</h1>
+                <p>List a new item on KadaPlatz.</p>
+            </div>
+
+            <AddProductForm onProductCreated={handleProductCreated} />
         </main>
     );
 }

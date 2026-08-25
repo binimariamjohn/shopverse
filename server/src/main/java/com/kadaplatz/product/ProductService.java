@@ -6,8 +6,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
 public class ProductService {
 
@@ -57,6 +55,7 @@ public class ProductService {
 
     existingProduct.setName(updatedProduct.getName());
     existingProduct.setPrice(updatedProduct.getPrice());
+    existingProduct.setCategory(updatedProduct.getCategory());
 
     return productRepository.save(existingProduct);
   }

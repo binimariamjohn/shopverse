@@ -1,6 +1,8 @@
 import { useState, type FormEvent } from "react";
 import type { Product } from "../types/Product";
 import {createProduct} from "../api/products";
+import { useAuth } from "../auth/useAuth";
+import { ApiError } from "../api/http";
 
 type AddProductFormProps = {
     onProductCreated: (product: Product) => void;
@@ -12,6 +14,7 @@ function AddProductForm({ onProductCreated }: AddProductFormProps) {
     const [category, setCategory] = useState("");
     const [errors, setErrors] = useState<Record<string, string>>({});
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const { token } = useAuth();
 
 
     async function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -21,11 +24,18 @@ function AddProductForm({ onProductCreated }: AddProductFormProps) {
         setIsSubmitting(true);
 
         try {
+            if (!token) {
+                setErrors({
+                    general: "Please log in to create products.",
+                });
+                return;
+            }
+
             const createdProduct = await createProduct({
                 name,
                 price: Number(price),
                 category,
-            });
+            }, token);
 
             onProductCreated(createdProduct);
 
@@ -33,33 +43,16 @@ function AddProductForm({ onProductCreated }: AddProductFormProps) {
             setPrice("");
             setCategory("");
         } catch (error) {
-            console.error("Error creating product:", error);
-
-            if (
-                typeof error === "object" &&
-                error !== null &&
-                "errors" in error
-            ) {
-                setErrors((error as { errors: Record<string, string> }).errors);
-                return;
-            }
-
-            if (
-                typeof error === "object" &&
-                error !== null &&
-                "message" in error
-            ) {
+            if (error instanceof ApiError) {
                 setErrors({
-                    general: String(
-                        (error as { message: string }).message
-                    ),
+                    ...(error.errors ?? {}),
+                    general: error.message,
                 });
-                return;
+            } else {
+                setErrors({
+                    general: "Could not create product. Please try again.",
+                });
             }
-
-            setErrors({
-                general: "Could not create product. Please try again.",
-            });
         } finally {
             setIsSubmitting(false);
         }
@@ -125,7 +118,7 @@ function AddProductForm({ onProductCreated }: AddProductFormProps) {
                 )}
             </div>
 
-            <button type="submit" disabled={isSubmitting}>
+            <button type="submit" className="btn-primary" disabled={isSubmitting}>
                 {isSubmitting ? "Adding..." : "Add Product"}
             </button>
         </form>

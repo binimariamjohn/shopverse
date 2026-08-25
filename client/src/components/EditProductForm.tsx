@@ -1,6 +1,8 @@
 import {useState, type FormEvent} from "react";
 import type {Product} from "../types/Product";
 import {updateProduct} from "../api/products";
+import { ApiError } from "../api/http";
+import { useAuth } from "../auth/useAuth";
 
 type EditProductFormProps = {
     product: Product;
@@ -13,6 +15,7 @@ function EditProductForm({
                              onProductUpdated,
                              onCancel,
                          }: EditProductFormProps) {
+    const { token } = useAuth();
     const [name, setName] = useState(product.name);
     const [price, setPrice] = useState(product.price.toString());
     const [category, setCategory] = useState(product.category);
@@ -27,39 +30,29 @@ function EditProductForm({
         setIsSubmitting(true);
 
         try {
+            if (!token) {
+                setErrors({ general: "You must be logged in to edit products." });
+                return;
+            }
+
             const updatedProduct = await updateProduct(product.id, {
                 name,
                 price: Number(price),
                 category,
-            });
+            }, token);
 
             onProductUpdated(updatedProduct);
         } catch (error) {
-            console.error("Error updating product:", error);
-
-            if (
-                typeof error === "object" &&
-                error !== null &&
-                "errors" in error
-            ) {
-                setErrors((error as { errors: Record<string, string> }).errors);
-                return;
-            }
-
-            if (
-                typeof error === "object" &&
-                error !== null &&
-                "message" in error
-            ) {
+            if (error instanceof ApiError) {
                 setErrors({
-                    general: String((error as { message: string }).message),
+                    ...(error.errors ?? {}),
+                    general: error.message,
                 });
-                return;
+            } else {
+                setErrors({
+                    general: "Could not update product. Please try again.",
+                });
             }
-
-            setErrors({
-                general: "Could not update product. Please try again.",
-            });
         } finally {
             setIsSubmitting(false);
         }
@@ -124,11 +117,11 @@ function EditProductForm({
             )}
 
             <div className="form-actions">
-                <button type="submit" disabled={isSubmitting}>
+                <button type="submit" className="btn-primary" disabled={isSubmitting}>
                     {isSubmitting ? "Saving..." : "Save"}
                 </button>
 
-                <button type="button" onClick={onCancel}>
+                <button type="button" className="btn-ghost" onClick={onCancel}>
                     Cancel
                 </button>
             </div>

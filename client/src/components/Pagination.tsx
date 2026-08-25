@@ -18,21 +18,21 @@ function Pagination({
     return (
         <div className="pagination">
             <button
+                className="btn-ghost"
                 onClick={onPrevious}
                 disabled={page === 0}
             >
-                Previous
+                ← Previous
             </button>
 
-            <span>
-                Page {page + 1} of {totalPages}
-            </span>
+            <span>Page {page + 1} of {totalPages}</span>
 
             <button
+                className="btn-ghost"
                 onClick={onNext}
                 disabled={page === totalPages - 1}
             >
-                Next
+                Next →
             </button>
         </div>
     );

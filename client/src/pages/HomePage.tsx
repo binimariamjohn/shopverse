@@ -5,6 +5,8 @@ import ProductControls from "../components/ProductControls";
 import Pagination from "../components/Pagination";
 import { getProducts } from "../api/products";
 import type { Product } from "../types/Product";
+import { useAuth } from "../auth/useAuth";
+import { useCart } from "../cart/useCart";
 
 function HomePage() {
     const [products, setProducts] = useState<Product[]>([]);
@@ -15,6 +17,10 @@ function HomePage() {
     const [page, setPage] = useState(0);
     const [totalPages, setTotalPages] = useState(0);
     const [totalElements, setTotalElements] = useState(0);
+    const { user, hasRole, isAuthenticated, logout } = useAuth();
+    const { itemCount } = useCart();
+    const canCreateProducts = hasRole(["ADMIN", "SELLER"]);
+    const canDeleteProducts = hasRole(["ADMIN"]);
 
     async function loadProducts(
         searchTerm: string,
@@ -81,22 +87,65 @@ function HomePage() {
         return () => clearTimeout(timeoutId);
     }, [search, sort, page]);
 
+    const roleLower = user?.role?.toLowerCase() ?? "buyer";
+
     return (
-        <main className="app">
-            <header className="header">
-                <h1>KadaPlatz</h1>
-                <p>Your marketplace, built for discovery.</p>
+        <>
+            <nav className="navbar">
+                <div className="navbar-inner">
+                    <Link to="/" className="navbar-brand-name" style={{ textDecoration: "none" }}>
+                        <div className="navbar-brand">
+                            <span className="navbar-brand-name">KadaPlatz</span>
+                            <span className="navbar-brand-tagline">Your marketplace</span>
+                        </div>
+                    </Link>
 
-                <Link
-                    to="/products/new"
-                    className="add-product-link"
-                >
-                    + Add Product
-                </Link>
-            </header>
+                    <div className="navbar-actions">
+                        {isAuthenticated ? (
+                            <>
+                                <div className="navbar-user">
+                                    <span>{user?.email}</span>
+                                    <span className={`role-badge ${roleLower}`}>
+                                        {user?.role}
+                                    </span>
+                                </div>
+                                {canCreateProducts && (
+                                    <Link to="/products/new" className="add-product-link">
+                                        + Add Product
+                                    </Link>
+                                )}
+                                    <Link to="/orders" className="nav-link">Orders</Link>
+                                    <Link to="/cart" className="cart-icon-link">
+                                        🛒
+                                        {itemCount > 0 && (
+                                            <span className="cart-badge">{itemCount}</span>
+                                        )}
+                                    </Link>
+                                    <button
+                                        type="button"
+                                        className="btn-ghost"
+                                        onClick={logout}
+                                    >
+                                        Log out
+                                    </button>
+                                </>
+                        ) : (
+                            <>
+                                <Link to="/login" className="nav-link">Log in</Link>
+                                <Link to="/register" className="add-product-link">
+                                    Register
+                                </Link>
+                            </>
+                        )}
+                    </div>
+                </div>
+            </nav>
 
-            <section>
-                <h2>Products ({totalElements})</h2>
+            <main className="app">
+                <div className="page-header">
+                    <h1>Browse Products</h1>
+                    <p>{totalElements} item{totalElements !== 1 ? "s" : ""} available</p>
+                </div>
 
                 <ProductControls
                     search={search}
@@ -108,13 +157,17 @@ function HomePage() {
                     }}
                 />
 
-                {isLoading && <p>Loading products...</p>}
+                {isLoading && (
+                    <p className="status-text">Loading products...</p>
+                )}
 
-                {error && <p>{error}</p>}
+                {error && (
+                    <p className="error-message">{error}</p>
+                )}
 
                 {!isLoading && !error && products.length === 0 && (
                     <div className="empty-state">
-                        <p>No products found.</p>
+                        <p>No products found. Try a different search.</p>
                     </div>
                 )}
 
@@ -126,6 +179,8 @@ function HomePage() {
                                 product={product}
                                 onDelete={handleDeleteProduct}
                                 onProductUpdated={handleProductUpdated}
+                                canEdit={canCreateProducts}
+                                canDelete={canDeleteProducts}
                             />
                         ))}
                     </div>
@@ -136,19 +191,15 @@ function HomePage() {
                         page={page}
                         totalPages={totalPages}
                         onPrevious={() =>
-                            setPage(
-                                (currentPage) => currentPage - 1
-                            )
+                            setPage((currentPage) => currentPage - 1)
                         }
                         onNext={() =>
-                            setPage(
-                                (currentPage) => currentPage + 1
-                            )
+                            setPage((currentPage) => currentPage + 1)
                         }
                     />
                 )}
-            </section>
-        </main>
+            </main>
+        </>
     );
 }
 

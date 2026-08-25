@@ -40,18 +40,17 @@ function ProductDetails() {
 
     if (isLoading) {
         return (
-            <main className="app">
-                <p>Loading product...</p>
+            <main className="app" style={{ paddingTop: "2rem" }}>
+                <p className="status-text">Loading product...</p>
             </main>
         );
     }
 
     if (error) {
         return (
-            <main className="app">
-                <p>{error}</p>
-
-                <Link to="/">Back to products</Link>
+            <main className="app" style={{ paddingTop: "2rem" }}>
+                <p className="error-message">{error}</p>
+                <Link to="/" className="back-link">← Back to products</Link>
             </main>
         );
     }
@@ -61,19 +60,17 @@ function ProductDetails() {
     }
 
     return (
-        <main className="app">
-            <Link to="/">← Back to products</Link>
+        <main className="app" style={{ paddingTop: "2rem" }}>
+            <Link to="/" className="back-link">← Back to products</Link>
 
             <section className="product-details">
+                <span className="product-category">
+                    {formatCategory(product.category)}
+                </span>
+
                 <h1>{product.name}</h1>
 
-                <p className={"product-category"}>
-                    {formatCategory(product.category)}
-                </p>
-
-                <p className="product-price">
-                    €{product.price}
-                </p>
+                <p className="product-price">€{product.price.toFixed(2)}</p>
             </section>
         </main>
     );
