@@ -34,7 +34,7 @@ jobs:
         run: npm run build
 
   server:
-    name: Server compile check
+    name: Server tests and compile
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -53,5 +53,5 @@ jobs:
       - name: Make Gradle wrapper executable
         run: chmod +x gradlew
 
-      - name: Compile server
-        run: ./gradlew classes
+      - name: Run server tests and compile
+        run: ./gradlew test classes

@@ -190,4 +190,4 @@ GitHub Actions runs on every push to `main` and on every pull request.
 It currently checks:
 
 - `client`: `npm ci`, `npm run lint`, `npm run build`
-- `server`: `./gradlew classes`
+- `server`: `./gradlew test classes`
