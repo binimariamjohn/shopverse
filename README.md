@@ -51,6 +51,7 @@ KadaPlatz is a full-stack marketplace application built with React and Spring Bo
 
 - Docker
 - Docker Compose
+- GitHub Actions CI
 
 ## How to Run
 
@@ -181,3 +182,12 @@ Default admin account (auto-seeded on startup):
 
 - Email: `admin@kadaplatz.dev`
 - Password: `Admin123!`
+
+## CI
+
+GitHub Actions runs on every push to `main` and on every pull request.
+
+It currently checks:
+
+- `client`: `npm ci`, `npm run lint`, `npm run build`
+- `server`: `./gradlew classes`
