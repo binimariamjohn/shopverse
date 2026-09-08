@@ -46,7 +46,7 @@ function RegisterPage() {
         <div className="auth-page">
             <div className="auth-card">
                 <div className="auth-card-header">
-                    <div className="auth-card-logo">KadaPlatz</div>
+                    <div className="auth-card-logo">shopverse</div>
                     <h1>Create an account</h1>
                     <p>Join as a buyer or seller</p>
                 </div>

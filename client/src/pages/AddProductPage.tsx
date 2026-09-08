@@ -15,7 +15,7 @@ function AddProductPage() {
 
             <div className="page-header">
                 <h1>Add Product</h1>
-                <p>List a new item on KadaPlatz.</p>
+                <p>List a new item on shopverse.</p>
             </div>
 
             <AddProductForm onProductCreated={handleProductCreated} />

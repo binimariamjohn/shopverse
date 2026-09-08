@@ -1,11 +1,11 @@
 services:
   postgres:
     image: postgres:17
-    container_name: kadaplatz-postgres
+    container_name: shopverse-postgres
     environment:
-      POSTGRES_DB: kadaplatz
-      POSTGRES_USER: kadaplatz
-      POSTGRES_PASSWORD: kadaplatz
+      POSTGRES_DB: shopverse
+      POSTGRES_USER: shopverse
+      POSTGRES_PASSWORD: shopverse
     ports:
       - "5432:5432"
     volumes:

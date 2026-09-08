@@ -95,7 +95,7 @@ function HomePage() {
                 <div className="navbar-inner">
                     <Link to="/" className="navbar-brand-name" style={{ textDecoration: "none" }}>
                         <div className="navbar-brand">
-                            <span className="navbar-brand-name">KadaPlatz</span>
+                            <span className="navbar-brand-name">ShopVerse</span>
                             <span className="navbar-brand-tagline">Your marketplace</span>
                         </div>
                     </Link>

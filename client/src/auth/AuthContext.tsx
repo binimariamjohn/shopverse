@@ -7,7 +7,7 @@ import {
 import { getCurrentUser, login, register } from "../api/auth";
 import type { AuthUser, UserRole } from "../types/Auth";
 
-const AUTH_STORAGE_KEY = "kadaplatz.auth.token";
+const AUTH_STORAGE_KEY = "shopverse.auth.token";
 
 type AuthContextValue = {
     user: AuthUser | null;

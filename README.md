@@ -1,6 +1,6 @@
-# KadaPlatz
+# ShopVerse
 
-KadaPlatz is a full-stack marketplace application built with React and Spring Boot. Users can browse, search, sort, and buy products, with role-based access for sellers and admins.
+ShopVerse is a full-stack marketplace application built with React and Spring Boot. Users can browse, search, sort, and buy products, with role-based access for sellers and admins.
 
 ## Features
 
@@ -67,7 +67,7 @@ Make sure you have the following installed:
 
 ```bash
 git clone <your-repository-url>
-cd kadaplatz
+cd shopverse
 ```
 
 ### 2. Start PostgreSQL
@@ -180,7 +180,7 @@ Role-based behavior:
 
 Default admin account (auto-seeded on startup):
 
-- Email: `admin@kadaplatz.dev`
+- Email: `admin@shopverse.dev`
 - Password: `Admin123!`
 
 ## CI

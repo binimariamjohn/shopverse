@@ -44,7 +44,7 @@ function LoginPage() {
         <div className="auth-page">
             <div className="auth-card">
                 <div className="auth-card-header">
-                    <div className="auth-card-logo">KadaPlatz</div>
+                    <div className="auth-card-logo">shopverse</div>
                     <h1>Welcome back</h1>
                     <p>Sign in to your account</p>
                 </div>
