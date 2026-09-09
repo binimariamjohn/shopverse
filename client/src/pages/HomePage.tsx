@@ -1,12 +1,10 @@
 import { useEffect, useState, type ChangeEvent } from "react";
-import { Link } from "react-router-dom";
 import ProductCard from "../components/ProductCard";
 import ProductControls from "../components/ProductControls";
 import Pagination from "../components/Pagination";
 import { getProducts } from "../api/products";
 import type { Product } from "../types/Product";
 import { useAuth } from "../auth/useAuth";
-import { useCart } from "../cart/useCart";
 
 function HomePage() {
     const [products, setProducts] = useState<Product[]>([]);
@@ -17,8 +15,7 @@ function HomePage() {
     const [page, setPage] = useState(0);
     const [totalPages, setTotalPages] = useState(0);
     const [totalElements, setTotalElements] = useState(0);
-    const { user, hasRole, isAuthenticated, logout } = useAuth();
-    const { itemCount } = useCart();
+    const { hasRole } = useAuth();
     const canCreateProducts = hasRole(["ADMIN", "SELLER"]);
     const canDeleteProducts = hasRole(["ADMIN"]);
 
@@ -87,118 +84,64 @@ function HomePage() {
         return () => clearTimeout(timeoutId);
     }, [search, sort, page]);
 
-    const roleLower = user?.role?.toLowerCase() ?? "buyer";
-
     return (
         <>
-            <nav className="navbar">
-                <div className="navbar-inner">
-                    <Link to="/" className="navbar-brand-name" style={{ textDecoration: "none" }}>
-                        <div className="navbar-brand">
-                            <span className="navbar-brand-name">ShopVerse</span>
-                            <span className="navbar-brand-tagline">Your marketplace</span>
-                        </div>
-                    </Link>
+            <div className="page-header">
+                <h1>Browse Products</h1>
+                <p>{totalElements} item{totalElements !== 1 ? "s" : ""} available</p>
+            </div>
 
-                    <div className="navbar-actions">
-                        {isAuthenticated ? (
-                            <>
-                                <div className="navbar-user">
-                                    <span>{user?.email}</span>
-                                    <span className={`role-badge ${roleLower}`}>
-                                        {user?.role}
-                                    </span>
-                                </div>
-                                {canCreateProducts && (
-                                    <Link to="/products/new" className="add-product-link">
-                                        + Add Product
-                                    </Link>
-                                )}
-                                    <Link to="/orders" className="nav-link">Orders</Link>
-                                    <Link to="/cart" className="cart-icon-link">
-                                        🛒
-                                        {itemCount > 0 && (
-                                            <span className="cart-badge">{itemCount}</span>
-                                        )}
-                                    </Link>
-                                    <button
-                                        type="button"
-                                        className="btn-ghost"
-                                        onClick={logout}
-                                    >
-                                        Log out
-                                    </button>
-                                </>
-                        ) : (
-                            <>
-                                <Link to="/login" className="nav-link">Log in</Link>
-                                <Link to="/register" className="add-product-link">
-                                    Register
-                                </Link>
-                            </>
-                        )}
-                    </div>
+            <ProductControls
+                search={search}
+                sort={sort}
+                onSearchChange={handleSearchChange}
+                onSortChange={(value) => {
+                    setSort(value);
+                    setPage(0);
+                }}
+            />
+
+            {isLoading && (
+                <p className="status-text">Loading products...</p>
+            )}
+
+            {error && (
+                <p className="error-message">{error}</p>
+            )}
+
+            {!isLoading && !error && products.length === 0 && (
+                <div className="empty-state">
+                    <p>No products found. Try a different search.</p>
                 </div>
-            </nav>
+            )}
 
-            <main className="app">
-                <div className="page-header">
-                    <h1>Browse Products</h1>
-                    <p>{totalElements} item{totalElements !== 1 ? "s" : ""} available</p>
+            {!isLoading && !error && products.length > 0 && (
+                <div className="product-grid">
+                    {products.map((product) => (
+                        <ProductCard
+                            key={product.id}
+                            product={product}
+                            onDelete={handleDeleteProduct}
+                            onProductUpdated={handleProductUpdated}
+                            canEdit={canCreateProducts}
+                            canDelete={canDeleteProducts}
+                        />
+                    ))}
                 </div>
+            )}
 
-                <ProductControls
-                    search={search}
-                    sort={sort}
-                    onSearchChange={handleSearchChange}
-                    onSortChange={(value) => {
-                        setSort(value);
-                        setPage(0);
-                    }}
+            {!isLoading && !error && (
+                <Pagination
+                    page={page}
+                    totalPages={totalPages}
+                    onPrevious={() =>
+                        setPage((currentPage) => currentPage - 1)
+                    }
+                    onNext={() =>
+                        setPage((currentPage) => currentPage + 1)
+                    }
                 />
-
-                {isLoading && (
-                    <p className="status-text">Loading products...</p>
-                )}
-
-                {error && (
-                    <p className="error-message">{error}</p>
-                )}
-
-                {!isLoading && !error && products.length === 0 && (
-                    <div className="empty-state">
-                        <p>No products found. Try a different search.</p>
-                    </div>
-                )}
-
-                {!isLoading && !error && products.length > 0 && (
-                    <div className="product-grid">
-                        {products.map((product) => (
-                            <ProductCard
-                                key={product.id}
-                                product={product}
-                                onDelete={handleDeleteProduct}
-                                onProductUpdated={handleProductUpdated}
-                                canEdit={canCreateProducts}
-                                canDelete={canDeleteProducts}
-                            />
-                        ))}
-                    </div>
-                )}
-
-                {!isLoading && !error && (
-                    <Pagination
-                        page={page}
-                        totalPages={totalPages}
-                        onPrevious={() =>
-                            setPage((currentPage) => currentPage - 1)
-                        }
-                        onNext={() =>
-                            setPage((currentPage) => currentPage + 1)
-                        }
-                    />
-                )}
-            </main>
+            )}
         </>
     );
 }

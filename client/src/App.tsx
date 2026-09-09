@@ -10,28 +10,34 @@ import CheckoutPage from "./pages/CheckoutPage";
 import OrderConfirmationPage from "./pages/OrderConfirmationPage";
 import OrdersPage from "./pages/OrdersPage";
 import ProtectedRoute from "./auth/ProtectedRoute";
+import Navigation from "./components/Navigation";
 
 function App() {
     return (
-        <Routes>
-            <Route path="/" element={<HomePage />} />
+        <>
+            <Navigation />
+            <div className="app">
+                <Routes>
+                    <Route path="/" element={<HomePage />} />
 
-            <Route element={<ProtectedRoute allowedRoles={["SELLER", "ADMIN"]} />}>
-                <Route path="/products/new" element={<AddProductPage />} />
-            </Route>
+                    <Route element={<ProtectedRoute allowedRoles={["SELLER", "ADMIN"]} />}>
+                        <Route path="/products/new" element={<AddProductPage />} />
+                    </Route>
 
-            <Route path="/products/:id" element={<ProductDetails />} />
+                    <Route path="/products/:id" element={<ProductDetails />} />
 
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/register" element={<RegisterPage />} />
+                    <Route path="/login" element={<LoginPage />} />
+                    <Route path="/register" element={<RegisterPage />} />
 
-            <Route element={<ProtectedRoute />}>
-                <Route path="/cart" element={<CartPage />} />
-                <Route path="/checkout" element={<CheckoutPage />} />
-                <Route path="/orders" element={<OrdersPage />} />
-                <Route path="/orders/confirmation/:id" element={<OrderConfirmationPage />} />
-            </Route>
-        </Routes>
+                    <Route element={<ProtectedRoute />}>
+                        <Route path="/cart" element={<CartPage />} />
+                        <Route path="/checkout" element={<CheckoutPage />} />
+                        <Route path="/orders" element={<OrdersPage />} />
+                        <Route path="/orders/confirmation/:id" element={<OrderConfirmationPage />} />
+                    </Route>
+                </Routes>
+            </div>
+        </>
     );
 }
 
